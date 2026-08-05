@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Settings, FileSpreadsheet, LockKeyhole, Users, ScrollText, Trash2 } from "lucide-react";
 import { api, getToken } from "../utils/api.js";
+import { AdEditor, LeaderboardManager } from "./ContentManager.jsx";
 
 function Toggle({ label, hint, checked, onChange }) {
   return (
@@ -138,7 +139,7 @@ function AuditLog() {
 }
 
 // ---- Main panel -------------------------------------------------------
-export default function AdminSettings({ settings, updateSetting }) {
+export default function AdminSettings({ settings, updateSetting, content, saveAd, saveLeaderboard }) {
   const [open, setOpen] = useState(false);
   const [pinCurrent, setPinCurrent] = useState("");
   const [pinDraft, setPinDraft] = useState("");
@@ -227,6 +228,21 @@ export default function AdminSettings({ settings, updateSetting }) {
             checked={settings.maintenanceMode}
             onChange={(v) => updateSetting("maintenanceMode", v)}
           />
+          <Toggle
+            label="Pop-up ads"
+            hint="Show the announcement popup to every visitor (once per visit)"
+            checked={settings.adsEnabled}
+            onChange={(v) => updateSetting("adsEnabled", v)}
+          />
+          <Toggle
+            label="Game banner"
+            hint="Show the leaderboard card below the top bar"
+            checked={settings.gameBannerEnabled}
+            onChange={(v) => updateSetting("gameBannerEnabled", v)}
+          />
+
+          <AdEditor ad={content?.ad} onSave={saveAd} onMsg={flashMsg} />
+          <LeaderboardManager leaderboard={content?.leaderboard} onSave={saveLeaderboard} onMsg={flashMsg} />
 
           <StaffManager onMsg={flashMsg} />
 

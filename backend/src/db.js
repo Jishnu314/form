@@ -65,6 +65,14 @@ db.exec(`
   );
 
   CREATE INDEX IF NOT EXISTS idx_audit_created ON audit_log(created_at);
+
+  -- Admin-managed page content: ad announcement, game leaderboard, etc.
+  -- Value is a JSON blob so each block can evolve without schema changes.
+  CREATE TABLE IF NOT EXISTS content (
+    key         TEXT PRIMARY KEY,
+    value       TEXT NOT NULL,
+    updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+  );
 `);
 
 const DEFAULT_SETTINGS = {
@@ -74,11 +82,28 @@ const DEFAULT_SETTINGS = {
   rdEnabled: "true",
   fdEnabled: "true",
   maintenanceMode: "false",
+  adsEnabled: "false",
+  gameBannerEnabled: "false",
+};
+
+const DEFAULT_CONTENT = {
+  ad: JSON.stringify({
+    title: "Announcement",
+    text: "",
+    image: "", // data URL or https URL
+    version: 1, // bump on every save so users see a re-published ad again
+  }),
+  leaderboard: JSON.stringify({
+    title: "Top Performers",
+    players: [], // [{ id, name, score }] — ranked by score on the client
+  }),
 };
 
 const seedSettings = db.prepare(`INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)`);
+const seedContent = db.prepare(`INSERT OR IGNORE INTO content (key, value) VALUES (?, ?)`);
 const seedTx = db.transaction(() => {
   Object.entries(DEFAULT_SETTINGS).forEach(([k, v]) => seedSettings.run(k, v));
+  Object.entries(DEFAULT_CONTENT).forEach(([k, v]) => seedContent.run(k, v));
 
   // Migrate the old single-admin table into users (keeps the existing PIN),
   // or bootstrap a fresh admin from ADMIN_PIN_BOOTSTRAP on first ever run.

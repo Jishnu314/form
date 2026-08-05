@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, Check, Pencil, Trash2, X } from "lucide-react";
 import { formatINR, monthKeyToLabel } from "../utils/format.js";
+import { useSettings } from "../hooks/useSettings.js"; // ← ADD THIS IMPORT
 
 // ---- helpers ----------------------------------------------------------
 function entryTotals(en) {
@@ -32,7 +33,10 @@ function EditRow({ entry, onSave, onCancel }) {
 
   async function save() {
     setBusy(true);
-    const ok = await onSave(entry.id, { name: name.trim(), renewal: Number(renewal) || 0 });
+    const ok = await onSave(entry.id, {
+      name: name.trim(),
+      renewal: Number(renewal) || 0,
+    });
     setBusy(false);
     if (ok) onCancel();
   }
@@ -45,7 +49,11 @@ function EditRow({ entry, onSave, onCancel }) {
         <input value={name} onChange={(e) => setName(e.target.value)} />
       </td>
       <td className="num">
-        <input value={renewal} inputMode="numeric" onChange={(e) => setRenewal(e.target.value.replace(/[^\d.]/g, ""))} />
+        <input
+          value={renewal}
+          inputMode="numeric"
+          onChange={(e) => setRenewal(e.target.value.replace(/[^\d.]/g, ""))}
+        />
       </td>
       <td className="num">{formatINR(rd)}</td>
       <td className="num">{formatINR(fd)}</td>
@@ -63,7 +71,12 @@ function EditRow({ entry, onSave, onCancel }) {
 }
 
 // ---- the sheet --------------------------------------------------------
-export default function SheetView({ entries, canEdit = true, onUpdateEntry, onRemoveEntry }) {
+export default function SheetView({
+  entries,
+  canEdit = true,
+  onUpdateEntry,
+  onRemoveEntry,
+}) {
   const [sortKey, setSortKey] = useState("date");
   const [sortDir, setSortDir] = useState("desc");
   const [month, setMonth] = useState("all");
@@ -71,13 +84,22 @@ export default function SheetView({ entries, canEdit = true, onUpdateEntry, onRe
   const [editingId, setEditingId] = useState(null);
   const [confirmId, setConfirmId] = useState(null);
 
+  // ← ADD THIS:
+  const { settings } = useSettings();
+
   const months = useMemo(() => {
-    const keys = [...new Set(entries.map(entryMonthKey))].filter((k) => k !== "unknown");
+    const keys = [...new Set(entries.map(entryMonthKey))].filter(
+      (k) => k !== "unknown",
+    );
     return keys.sort().reverse();
   }, [entries]);
 
   const rows = useMemo(() => {
-    let list = entries.map((en) => ({ en, ...entryTotals(en), monthKey: entryMonthKey(en) }));
+    let list = entries.map((en) => ({
+      en,
+      ...entryTotals(en),
+      monthKey: entryMonthKey(en),
+    }));
     if (month !== "all") list = list.filter((r) => r.monthKey === month);
     const q = query.trim().toLowerCase();
     if (q) list = list.filter((r) => r.en.name.toLowerCase().includes(q));
@@ -85,8 +107,12 @@ export default function SheetView({ entries, canEdit = true, onUpdateEntry, onRe
     list.sort((a, b) => {
       let av, bv;
       if (sortKey === "date") {
-        av = new Date(a.en.createdAt || a.en.timestamp || a.en.date).getTime() || 0;
-        bv = new Date(b.en.createdAt || b.en.timestamp || b.en.date).getTime() || 0;
+        av =
+          new Date(a.en.createdAt || a.en.timestamp || a.en.date).getTime() ||
+          0;
+        bv =
+          new Date(b.en.createdAt || b.en.timestamp || b.en.date).getTime() ||
+          0;
       } else if (sortKey === "name") {
         av = a.en.name.toLowerCase();
         bv = b.en.name.toLowerCase();
@@ -112,7 +138,7 @@ export default function SheetView({ entries, canEdit = true, onUpdateEntry, onRe
       acc.total += r.total;
       return acc;
     },
-    { renewal: 0, rd: 0, fd: 0, total: 0 }
+    { renewal: 0, rd: 0, fd: 0, total: 0 },
   );
 
   function clickSort(key) {
@@ -124,7 +150,11 @@ export default function SheetView({ entries, canEdit = true, onUpdateEntry, onRe
   }
 
   return (
-    <div className="rdfd-sheet">
+    <div
+      className={`rdfd-sheet ${settings.stickyNameColumn ? "sticky-enabled" : ""}`}
+    >
+      {" "}
+      {/* ← CHANGED THIS LINE */}
       <div className="rdfd-sheet-toolbar">
         <select value={month} onChange={(e) => setMonth(e.target.value)}>
           <option value="all">All months</option>
@@ -134,21 +164,32 @@ export default function SheetView({ entries, canEdit = true, onUpdateEntry, onRe
             </option>
           ))}
         </select>
-        <input placeholder="Filter by name…" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <input
+          placeholder="Filter by name…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+        />
         <span className="rdfd-sheet-count">
           {rows.length} row{rows.length === 1 ? "" : "s"}
         </span>
       </div>
-
       <div className="rdfd-sheet-scroll">
         <table>
           <thead>
             <tr>
               {COLUMNS.map((c) => (
-                <th key={c.key} className={c.num ? "num" : ""} onClick={() => clickSort(c.key)}>
+                <th
+                  key={c.key}
+                  className={c.num ? "num" : ""}
+                  onClick={() => clickSort(c.key)}
+                >
                   {c.label}
                   {sortKey === c.key &&
-                    (sortDir === "asc" ? <ArrowUp size={11} /> : <ArrowDown size={11} />)}
+                    (sortDir === "asc" ? (
+                      <ArrowUp size={11} />
+                    ) : (
+                      <ArrowDown size={11} />
+                    ))}
                 </th>
               ))}
               <th />
@@ -164,7 +205,12 @@ export default function SheetView({ entries, canEdit = true, onUpdateEntry, onRe
             )}
             {rows.map(({ en, rd, fd, total }) =>
               editingId === en.id ? (
-                <EditRow key={en.id} entry={en} onSave={onUpdateEntry} onCancel={() => setEditingId(null)} />
+                <EditRow
+                  key={en.id}
+                  entry={en}
+                  onSave={onUpdateEntry}
+                  onCancel={() => setEditingId(null)}
+                />
               ) : (
                 <tr key={en.id}>
                   <td>{en.date}</td>
@@ -187,23 +233,36 @@ export default function SheetView({ entries, canEdit = true, onUpdateEntry, onRe
                         >
                           <Check size={14} />
                         </button>
-                        <button type="button" title="Cancel" onClick={() => setConfirmId(null)}>
+                        <button
+                          type="button"
+                          title="Cancel"
+                          onClick={() => setConfirmId(null)}
+                        >
                           <X size={14} />
                         </button>
                       </>
                     ) : (
                       <>
-                        <button type="button" title="Edit" onClick={() => setEditingId(en.id)}>
+                        <button
+                          type="button"
+                          title="Edit"
+                          onClick={() => setEditingId(en.id)}
+                        >
                           <Pencil size={14} />
                         </button>
-                        <button type="button" className="danger" title="Delete" onClick={() => setConfirmId(en.id)}>
+                        <button
+                          type="button"
+                          className="danger"
+                          title="Delete"
+                          onClick={() => setConfirmId(en.id)}
+                        >
                           <Trash2 size={14} />
                         </button>
                       </>
                     )}
                   </td>
                 </tr>
-              )
+              ),
             )}
           </tbody>
           {rows.length > 0 && (

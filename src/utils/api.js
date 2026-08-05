@@ -69,4 +69,8 @@ export const api = {
   summary: () => request("/entries/summary", { auth: true }),
 
   exportExcelUrl: () => `${API_URL}/export/excel`,
+
+  getContent: () => request("/content"),
+  updateAd: (ad) => request("/content/ad", { method: "PUT", body: ad, auth: true }),
+  updateLeaderboard: (lb) => request("/content/leaderboard", { method: "PUT", body: lb, auth: true }),
 };

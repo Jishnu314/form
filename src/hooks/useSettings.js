@@ -8,6 +8,9 @@ const DEFAULT_SETTINGS = {
   rdEnabled: true,
   fdEnabled: true,
   maintenanceMode: false,
+  stickyNameColumn: true,
+  adsEnabled: false,
+  gameBannerEnabled: false,
 };
 
 // Settings now live on the server (shared by everyone). Anyone can read

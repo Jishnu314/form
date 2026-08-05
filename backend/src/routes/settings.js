@@ -10,6 +10,8 @@ const ALLOWED_KEYS = [
   "rdEnabled",
   "fdEnabled",
   "maintenanceMode",
+  "adsEnabled",
+  "gameBannerEnabled",
 ];
 
 function readAllSettings() {

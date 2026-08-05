@@ -9,18 +9,22 @@ import AdminSettings from "./components/AdminSettings.jsx";
 import PinModal from "./components/PinModal.jsx";
 import EntryModal from "./components/EntryModal.jsx";
 import Toast from "./components/Toast.jsx";
+import AdPopup from "./components/AdPopup.jsx";
+import GameBanner from "./components/GameBanner.jsx";
 
 import { useEntries } from "./hooks/useEntries.js";
 import { useEntryDraft } from "./hooks/useEntryDraft.js";
 import { useAdminGate } from "./hooks/useAdminGate.js";
 import { useSettings } from "./hooks/useSettings.js";
 import { useToast } from "./hooks/useToast.js";
+import { useContent } from "./hooks/useContent.js";
 
 export default function App() {
   const admin = useAdminGate();
   const { entries, loading, error: entriesError, addEntry, removeEntry, updateEntry, refresh } = useEntries(admin.isLoggedIn);
   const draftState = useEntryDraft();
   const { settings, updateSetting } = useSettings();
+  const { content, saveAd, saveLeaderboard } = useContent();
   const { toast, showToast } = useToast();
   const [view, setView] = useState("cards"); // "cards" | "sheet"
 
@@ -92,6 +96,8 @@ export default function App() {
       <Topbar isAdmin={admin.isLoggedIn} entryCount={entries.length} liveTotal={liveTotal} />
 
       <div className="rdfd-shell">
+        {settings.gameBannerEnabled && <GameBanner leaderboard={content.leaderboard} />}
+
         {admin.isAdmin && settings.maintenanceMode && (
           <div className="rdfd-entries-paused">
             Maintenance mode is ON — visitors currently see a "closed" notice.
@@ -102,7 +108,15 @@ export default function App() {
           <GrandTotalBanner total={grandTotal} />
         )}
 
-        {admin.isAdmin && <AdminSettings settings={settings} updateSetting={updateSetting} />}
+        {admin.isAdmin && (
+          <AdminSettings
+            settings={settings}
+            updateSetting={updateSetting}
+            content={content}
+            saveAd={saveAd}
+            saveLeaderboard={saveLeaderboard}
+          />
+        )}
 
         {entriesError && admin.isLoggedIn && <div className="rdfd-entries-paused">{entriesError}</div>}
 
@@ -170,6 +184,8 @@ export default function App() {
       </div>
 
       <Toast message={toast} />
+
+      {settings.adsEnabled && <AdPopup ad={content.ad} />}
 
       <PinModal
         open={admin.pinModalOpen}
