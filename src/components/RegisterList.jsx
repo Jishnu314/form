@@ -3,7 +3,7 @@ import { Download, Lock, Search, X } from "lucide-react";
 import EntryCard from "./EntryCard.jsx";
 import { exportEntriesToCSV } from "../utils/csv.js";
 
-export default function RegisterList({ entries, loading, onRemoveEntry, onLock }) {
+export default function RegisterList({ entries, loading, canEdit = true, onRemoveEntry, onLock }) {
   const [query, setQuery] = useState("");
 
   const filtered = entries.filter((en) => en.name.toLowerCase().includes(query.trim().toLowerCase()));
@@ -13,9 +13,11 @@ export default function RegisterList({ entries, loading, onRemoveEntry, onLock }
       <div className="rdfd-listhead">
         <h2>Register</h2>
         <div style={{ display: "flex", gap: "8px" }}>
-          <button className="rdfd-export" onClick={() => exportEntriesToCSV(entries)} type="button">
-            <Download size={13} /> Export CSV
-          </button>
+          {canEdit && (
+            <button className="rdfd-export" onClick={() => exportEntriesToCSV(entries)} type="button">
+              <Download size={13} /> Export CSV
+            </button>
+          )}
           <button className="rdfd-export" onClick={onLock} type="button">
             <Lock size={13} /> Lock
           </button>
@@ -41,7 +43,7 @@ export default function RegisterList({ entries, loading, onRemoveEntry, onLock }
           {entries.length === 0 ? "No entries yet. Add your first one above." : "No entries match that search."}
         </div>
       ) : (
-        filtered.map((en) => <EntryCard key={en.id} entry={en} onRemove={onRemoveEntry} />)
+        filtered.map((en) => <EntryCard key={en.id} entry={en} canEdit={canEdit} onRemove={onRemoveEntry} />)
       )}
     </>
   );

@@ -1,5 +1,6 @@
 import { X, Trash2, Check } from "lucide-react";
 import { formatAmountInput, unformatAmountInput } from "../utils/format.js";
+
 const TITLES = {
   renewal: "Renewal amount",
   rd: { new: "New RD", edit: "Edit RD" },
@@ -13,18 +14,10 @@ function getTitle(modal) {
   return "";
 }
 
-export default function EntryModal({
-  modal,
-  onClose,
-  onAmountChange,
-  onSchemeChange,
-  onSave,
-  onDelete,
-}) {
+export default function EntryModal({ modal, onClose, onAmountChange, onSchemeChange, onSave, onDelete }) {
   if (!modal.open) return null;
 
-  const amountInvalid =
-    modal.error && (!modal.amount || Number(modal.amount) <= 0);
+  const amountInvalid = modal.error && (!modal.amount || Number(modal.amount) <= 0);
   const schemeInvalid = modal.error && !modal.scheme.trim();
 
   return (
@@ -48,19 +41,14 @@ export default function EntryModal({
             placeholder="0"
             value={formatAmountInput(modal.amount)}
             autoFocus
-            onChange={(e) =>
-              onAmountChange(unformatAmountInput(e.target.value))
-            }
+            onChange={(e) => onAmountChange(unformatAmountInput(e.target.value))}
             className={amountInvalid ? "err" : ""}
             enterKeyHint={modal.kind === "renewal" ? "done" : "next"}
           />
         </div>
 
         {modal.kind !== "renewal" && (
-          <div
-            className="rdfd-field"
-            style={{ marginBottom: modal.error ? "4px" : "0" }}
-          >
+          <div className="rdfd-field" style={{ marginBottom: modal.error ? "4px" : "0" }}>
             <label>
               Scheme name<span className="req">*</span>
             </label>
@@ -83,11 +71,7 @@ export default function EntryModal({
 
         <div className="rdfd-modal-actions">
           {modal.editId && (
-            <button
-              type="button"
-              className="rdfd-modal-delete"
-              onClick={onDelete}
-            >
+            <button type="button" className="rdfd-modal-delete" onClick={onDelete}>
               <Trash2 size={15} /> Remove
             </button>
           )}

@@ -49,7 +49,7 @@ function SubCard({ icon, title, total, children }) {
   );
 }
 
-export default function EntryCard({ entry, onRemove }) {
+export default function EntryCard({ entry, onRemove, canEdit = true }) {
   const rdTotal = entry.rdArray.reduce((sum, rd) => sum + rd.rdAmount, 0);
   const fdTotal = entry.fdArray.reduce((sum, fd) => sum + fd.fdAmount, 0);
 
@@ -60,9 +60,11 @@ export default function EntryCard({ entry, onRemove }) {
           <div className="rdfd-entry-name">{entry.name}</div>
           <div className="rdfd-entry-date">{entry.date}</div>
         </div>
-        <button className="rdfd-del" onClick={() => onRemove(entry.id)}>
-          <Trash2 size={16} />
-        </button>
+        {canEdit && (
+          <button className="rdfd-del" onClick={() => onRemove(entry.id)}>
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
 
       <SubCard icon={<Landmark size={13} />} title="Renewal" total={entry.renewal} />

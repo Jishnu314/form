@@ -1,6 +1,6 @@
 import { X, ShieldCheck, Check } from "lucide-react";
 
-export default function PinModal({ open, value, error, onChange, onClose, onSubmit }) {
+export default function PinModal({ open, value, error, busy, onChange, onClose, onSubmit }) {
   if (!open) return null;
 
   return (
@@ -34,8 +34,8 @@ export default function PinModal({ open, value, error, onChange, onClose, onSubm
         </div>
 
         <div className="rdfd-modal-actions">
-          <button type="button" className="rdfd-modal-save" onClick={onSubmit}>
-            <Check size={17} /> Unlock
+          <button type="button" className="rdfd-modal-save" onClick={onSubmit} disabled={busy}>
+            <Check size={17} /> {busy ? "Checking…" : "Unlock"}
           </button>
         </div>
       </div>

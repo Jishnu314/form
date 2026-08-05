@@ -42,9 +42,7 @@ export function formatAmountInput(raw) {
 
   const lastThree = intPart.slice(-3);
   const other = intPart.slice(0, -3);
-  const grouped = other
-    ? other.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree
-    : lastThree;
+  const grouped = other ? other.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + lastThree : lastThree;
 
   return decRest.length ? `${grouped}.${decRest.join("")}` : grouped;
 }

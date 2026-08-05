@@ -1,43 +1,50 @@
 import { useEffect, useState } from "react";
-import { SETTINGS_KEY, ADMIN_PIN } from "../constants.js";
+import { api } from "../utils/api.js";
 
 const DEFAULT_SETTINGS = {
-  sheetSyncEnabled: true,   // push each new entry to the Google Sheet webhook
-  acceptingEntries: true,   // false = form is hidden, register is view-only
-  showGrandTotal: true,     // show the grand-total banner in admin view
-  adminPin: ADMIN_PIN,      // can be changed from the admin panel
+  sheetSyncEnabled: true,
+  acceptingEntries: true,
+  showGrandTotal: true,
+  rdEnabled: true,
+  fdEnabled: true,
+  maintenanceMode: false,
 };
 
+// Settings now live on the server (shared by everyone). Anyone can read
+// them (needed so the entry form knows if it's turned on); only an
+// authenticated admin can change them.
 export function useSettings() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
+  async function refresh() {
     try {
-      const raw = localStorage.getItem(SETTINGS_KEY);
-      if (raw) setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(raw) });
+      const data = await api.getSettings();
+      setSettings({ ...DEFAULT_SETTINGS, ...data });
     } catch (e) {
-      // fall back to defaults
+      // keep defaults if the server is unreachable
     } finally {
       setLoaded(true);
     }
+  }
+
+  useEffect(() => {
+    refresh();
   }, []);
 
-  function updateSetting(key, value) {
-    setSettings((prev) => {
-      const next = { ...prev, [key]: value };
-      try {
-        localStorage.setItem(SETTINGS_KEY, JSON.stringify(next));
-      } catch (e) {
-        // ignore write failures, keep in-memory value
-      }
-      return next;
-    });
+  async function updateSetting(key, value) {
+    setSettings((prev) => ({ ...prev, [key]: value })); // optimistic
+    try {
+      const data = await api.updateSettings({ [key]: value });
+      setSettings((prev) => ({ ...prev, ...data }));
+    } catch (e) {
+      refresh(); // roll back to server truth on failure
+    }
   }
 
   function toggleSetting(key) {
     updateSetting(key, !settings[key]);
   }
 
-  return { settings, loaded, updateSetting, toggleSetting };
+  return { settings, loaded, updateSetting, toggleSetting, refresh };
 }

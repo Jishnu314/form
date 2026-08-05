@@ -1,44 +1,67 @@
-import { useEffect, useState } from "react";
-import { STORAGE_KEY } from "../constants.js";
+import { useCallback, useEffect, useState } from "react";
+import { api } from "../utils/api.js";
 
-// NOTE: localStorage lives in each visitor's own browser — it is NOT shared
-// across devices. That means the in-app "Register" (admin view) only shows
-// entries submitted from the same browser it's opened in. To see every
-// submission from every visitor in one place, rely on the Google Sheet sync
-// (see utils/googleSheets.js + README.md), or swap this hook out for calls
-// to your own backend/database.
-export function useEntries() {
+// Entries now live in the backend's database, shared by every device.
+// Admin mode fetches the full list from the server; when logged out, the
+// list simply stays empty (the API requires admin auth to read entries).
+export function useEntries(isAdmin) {
   const [entries, setEntries] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
+  const refresh = useCallback(async () => {
+    if (!isAdmin) {
+      setEntries([]);
+      return;
+    }
+    setLoading(true);
+    setError("");
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setEntries(JSON.parse(raw));
+      const data = await api.listEntries();
+      setEntries(data);
     } catch (e) {
-      // no saved data yet, or it was corrupted — start fresh
+      setError(e.message || "Could not load the register");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAdmin]);
 
-  function persist(next) {
-    setEntries(next);
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  async function addEntry(entry) {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      const saved = await api.addEntry(entry);
+      if (isAdmin) setEntries((prev) => [saved, ...prev]);
+      return true;
     } catch (e) {
+      setError(e.message || "Could not save the entry");
       return false;
     }
-    return true;
   }
 
-  function addEntry(entry) {
-    return persist([entry, ...entries]);
+  async function removeEntry(id) {
+    try {
+      await api.removeEntry(id);
+      setEntries((prev) => prev.filter((en) => en.id !== id));
+      return true;
+    } catch (e) {
+      setError(e.message || "Could not remove the entry");
+      return false;
+    }
   }
 
-  function removeEntry(id) {
-    return persist(entries.filter((en) => en.id !== id));
+  async function updateEntry(id, patch) {
+    try {
+      const saved = await api.updateEntry(id, patch);
+      setEntries((prev) => prev.map((en) => (en.id === id ? saved : en)));
+      return true;
+    } catch (e) {
+      setError(e.message || "Could not update the entry");
+      return false;
+    }
   }
 
-  return { entries, loading, addEntry, removeEntry };
+  return { entries, loading, error, addEntry, removeEntry, updateEntry, refresh };
 }

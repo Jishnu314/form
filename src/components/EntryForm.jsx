@@ -1,8 +1,9 @@
-import { Landmark, PiggyBank, Banknote, Check } from "lucide-react";
+import { Landmark, PiggyBank, Banknote, Check, Sigma } from "lucide-react";
 import TapRow from "./TapRow.jsx";
 import AmountSection from "./AmountSection.jsx";
+import { formatINR } from "../utils/format.js";
 
-export default function EntryForm({ draftState, onSubmit }) {
+export default function EntryForm({ draftState, onSubmit, rdEnabled = true, fdEnabled = true }) {
   const {
     draft,
     rdList,
@@ -10,6 +11,7 @@ export default function EntryForm({ draftState, onSubmit }) {
     nameError,
     rdTotal,
     fdTotal,
+    draftTotal,
     setName,
     openRenewalModal,
     openNewRD,
@@ -49,29 +51,42 @@ export default function EntryForm({ draftState, onSubmit }) {
         onClick={openRenewalModal}
       />
 
-      <AmountSection
-        icon={<PiggyBank size={13} />}
-        label="New RD"
-        kind="RD"
-        items={rdList}
-        amountKey="rdAmount"
-        schemeKey="rdScheme"
-        total={rdTotal}
-        onAdd={openNewRD}
-        onEditItem={openEditRD}
-      />
+      {rdEnabled && (
+        <AmountSection
+          icon={<PiggyBank size={13} />}
+          label="New RD"
+          kind="RD"
+          items={rdList}
+          amountKey="rdAmount"
+          schemeKey="rdScheme"
+          total={rdTotal}
+          onAdd={openNewRD}
+          onEditItem={openEditRD}
+        />
+      )}
 
-      <AmountSection
-        icon={<Banknote size={13} />}
-        label="New FD"
-        kind="FD"
-        items={fdList}
-        amountKey="fdAmount"
-        schemeKey="fdScheme"
-        total={fdTotal}
-        onAdd={openNewFD}
-        onEditItem={openEditFD}
-      />
+      {fdEnabled && (
+        <AmountSection
+          icon={<Banknote size={13} />}
+          label="New FD"
+          kind="FD"
+          items={fdList}
+          amountKey="fdAmount"
+          schemeKey="fdScheme"
+          total={fdTotal}
+          onAdd={openNewFD}
+          onEditItem={openEditFD}
+        />
+      )}
+
+      {draftTotal > 0 && (
+        <div className="rdfd-draft-total">
+          <span className="rdfd-draft-total-label">
+            <Sigma size={14} /> Entry total
+          </span>
+          <span className="rdfd-draft-total-value">₹{formatINR(draftTotal)}</span>
+        </div>
+      )}
 
       <button type="submit" className="rdfd-submit">
         <Check size={18} /> Save entry
