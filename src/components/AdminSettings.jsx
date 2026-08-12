@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Settings, FileSpreadsheet, LockKeyhole, Users, ScrollText, Trash2 } from "lucide-react";
 import { api, getToken } from "../utils/api.js";
-import { AdEditor, LeaderboardManager } from "./ContentManager.jsx";
+import { AdEditor, LeaderboardManager, MaintenanceEditor } from "./ContentManager.jsx";
 
 function Toggle({ label, hint, checked, onChange }) {
   return (
@@ -139,7 +139,7 @@ function AuditLog() {
 }
 
 // ---- Main panel -------------------------------------------------------
-export default function AdminSettings({ settings, updateSetting, content, saveAd, saveLeaderboard }) {
+export default function AdminSettings({ settings, updateSetting, content, saveAd, saveLeaderboard, saveMaintenance }) {
   const [open, setOpen] = useState(false);
   const [pinCurrent, setPinCurrent] = useState("");
   const [pinDraft, setPinDraft] = useState("");
@@ -242,6 +242,7 @@ export default function AdminSettings({ settings, updateSetting, content, saveAd
           />
 
           <AdEditor ad={content?.ad} onSave={saveAd} onMsg={flashMsg} />
+          <MaintenanceEditor maintenance={content?.maintenance} onSave={saveMaintenance} onMsg={flashMsg} />
           <LeaderboardManager leaderboard={content?.leaderboard} onSave={saveLeaderboard} onMsg={flashMsg} />
 
           <StaffManager onMsg={flashMsg} />

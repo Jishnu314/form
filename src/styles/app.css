@@ -509,6 +509,74 @@ input[type="number"] {
   font-weight: 600;
 }
 
+/* Maintenance-mode notice (visitor view) */
+.rdfd-maintenance {
+  margin-top: 40px;
+  text-align: center;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 34px 22px 30px;
+  box-shadow: 0 6px 20px rgba(20, 34, 64, 0.06);
+}
+.rdfd-maintenance-art {
+  width: 150px;
+  height: auto;
+  margin: 0 auto 6px;
+  display: block;
+  animation: rdfd-cone-bob 3.2s ease-in-out infinite;
+}
+@keyframes rdfd-cone-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.6deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(0.8deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rdfd-maintenance-art {
+    animation: none;
+  }
+}
+.rdfd-maintenance-title {
+  font-family: "Fraunces", serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.rdfd-maintenance-text {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+/* Uploaded (custom) maintenance image — keep it tidy inside the card */
+.rdfd-maintenance-img {
+  width: auto;
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 12px;
+  object-fit: contain;
+  margin-bottom: 14px;
+}
+/* Admin panel: thumbnails of the uploaded maintenance images */
+.rdfd-maint-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rdfd-maint-thumb {
+  width: calc(33.33% - 6px);
+}
+.rdfd-maint-thumb img {
+  width: 100%;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
 .rdfd-admin-settings {
   margin-bottom: 14px;
 }
@@ -1038,13 +1106,34 @@ input[type="number"] {
   display: flex;
   align-items: center;
   gap: 7px;
+  width: 100%;
+  margin: 0 0 10px;
+  padding: 0;
+  background: none;
+  border: none;
   font-family: "Fraunces", serif;
   font-weight: 600;
   font-size: 15px;
   color: var(--ink, #142240);
-  margin-bottom: 10px;
+  text-align: left;
+  cursor: default;
 }
+.rdfd-game-banner.is-expandable .rdfd-game-banner-head { cursor: pointer; }
 .rdfd-game-banner-head svg { color: var(--accent, #b8873a); }
+.rdfd-game-title { flex-shrink: 0; }
+.rdfd-game-toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted, #6c7690);
+}
+.rdfd-game-toggle svg { color: var(--muted, #6c7690); transition: transform 0.2s ease; }
+.rdfd-game-toggle svg.rot { transform: rotate(180deg); }
 .rdfd-game-rows { display: flex; flex-direction: column; gap: 6px; }
 .rdfd-game-row {
   display: flex;
@@ -1091,6 +1180,18 @@ input[type="number"] {
   font-weight: 500;
   color: var(--muted, #6c7690);
   margin-left: 7px;
+}
+.rdfd-game-draw {
+  flex-shrink: 0;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(184, 135, 58, 0.16);
+  color: var(--accent-deep, #8f6a2c);
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 .rdfd-game-score {
   font-family: "IBM Plex Mono", monospace;

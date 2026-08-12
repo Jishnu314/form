@@ -10,6 +10,7 @@ import entriesRoutes from "./routes/entries.js";
 import settingsRoutes from "./routes/settings.js";
 import exportRoutes from "./routes/export.js";
 import contentRoutes from "./routes/content.js";
+import adminRoutes from "./routes/admin.js";
 
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET === "change_this_to_a_long_random_string") {
   console.warn(
@@ -37,8 +38,12 @@ app.use(
     },
   })
 );
-// 200kb is fine for entries, but the ad image (base64 data URL) needs more room.
-app.use("/api/content", express.json({ limit: "3mb" }));
+// 200kb is fine for entries, but admin content (base64 ad image + up to 6
+// maintenance-page images) needs much more headroom.
+app.use("/api/content", express.json({ limit: "10mb" }));
+// Bulk import and full-database restore carry large JSON payloads.
+app.use("/api/entries/import", express.json({ limit: "25mb" }));
+app.use("/api/admin/restore", express.json({ limit: "50mb" }));
 app.use(express.json({ limit: "200kb" }));
 
 // Blunt global request flood, on top of the tighter per-route limiters.
@@ -58,6 +63,7 @@ app.use("/api/entries", entriesRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/export", exportRoutes);
 app.use("/api/content", contentRoutes);
+app.use("/api/admin", adminRoutes);
 
 // 404 for unknown API routes
 app.use("/api", (req, res) => res.status(404).json({ error: "Not found" }));

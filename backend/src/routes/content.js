@@ -30,7 +30,35 @@ router.get("/", (req, res) => {
   res.json({
     ad: readContent("ad"),
     leaderboard: readContent("leaderboard"),
+    maintenance: readContent("maintenance"),
   });
+});
+
+// Admin: customize the maintenance-mode page (title, message, images).
+// Empty fields mean "use the built-in default" on the frontend. Multiple
+// images are allowed — the frontend shows one at random per visit.
+router.put("/maintenance", requireAdmin, (req, res) => {
+  const { title = "", text = "", images = [] } = req.body || {};
+
+  if (typeof title !== "string" || typeof text !== "string" || !Array.isArray(images))
+    return res.status(400).json({ error: "Invalid maintenance payload" });
+  if (title.length > 120) return res.status(400).json({ error: "Title too long (max 120 chars)" });
+  if (text.length > 1000) return res.status(400).json({ error: "Text too long (max 1000 chars)" });
+  if (images.length > 8) return res.status(400).json({ error: "Too many images (max 8)" });
+
+  for (const img of images) {
+    if (typeof img !== "string")
+      return res.status(400).json({ error: "Invalid maintenance payload" });
+    if (img.length > MAX_IMAGE_CHARS)
+      return res.status(400).json({ error: "An image is too large — keep each under ~1.5 MB" });
+    if (!/^(data:image\/(png|jpe?g|gif|webp|svg\+xml);base64,|https?:\/\/)/.test(img))
+      return res.status(400).json({ error: "Images must be uploaded files or http(s) URLs" });
+  }
+
+  const next = { title: title.trim(), text: text.trim(), images: images.filter(Boolean) };
+  writeContent("maintenance", next);
+  logAudit(req.user.label, "content", `maintenance page updated (${next.images.length} images)`);
+  res.json(next);
 });
 
 // Admin: update the ad announcement.

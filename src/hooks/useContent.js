@@ -4,13 +4,17 @@ import { api } from "../utils/api.js";
 // Admin-managed page content (ad announcement + game leaderboard).
 // Public read — everyone gets it; only admins can write via the panel.
 export function useContent() {
-  const [content, setContent] = useState({ ad: null, leaderboard: null });
+  const [content, setContent] = useState({ ad: null, leaderboard: null, maintenance: null });
   const [loaded, setLoaded] = useState(false);
 
   async function refresh() {
     try {
       const data = await api.getContent();
-      setContent({ ad: data.ad || null, leaderboard: data.leaderboard || null });
+      setContent({
+        ad: data.ad || null,
+        leaderboard: data.leaderboard || null,
+        maintenance: data.maintenance || null,
+      });
     } catch (e) {
       // server unreachable — sections just don't render
     } finally {
@@ -34,5 +38,11 @@ export function useContent() {
     return saved;
   }
 
-  return { content, loaded, refresh, saveAd, saveLeaderboard };
+  async function saveMaintenance(m) {
+    const saved = await api.updateMaintenance(m);
+    setContent((prev) => ({ ...prev, maintenance: saved }));
+    return saved;
+  }
+
+  return { content, loaded, refresh, saveAd, saveLeaderboard, saveMaintenance };
 }

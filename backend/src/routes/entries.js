@@ -147,6 +147,47 @@ router.get("/summary", requireStaff, (req, res) => {
   res.json({ count: rows.length, grandTotal: total });
 });
 
+// Admin-only: bulk import rows (e.g. from a CSV the frontend parsed). Each
+// row goes through the same validation as a single create, and the whole
+// batch is inserted in one transaction so a bad row imports nothing.
+router.post("/import", requireAdmin, (req, res) => {
+  const list = Array.isArray(req.body?.entries) ? req.body.entries : null;
+  if (!list) return res.status(400).json({ error: "No entries to import" });
+  if (list.length === 0) return res.status(400).json({ error: "The file had no rows" });
+  if (list.length > 5000) return res.status(400).json({ error: "Too many rows (max 5000 at once)" });
+
+  const cleaned = [];
+  for (let i = 0; i < list.length; i++) {
+    const errors = validateEntryBody(list[i] || {});
+    if (errors.length)
+      return res.status(400).json({ error: `Row ${i + 1} (${list[i]?.name || "no name"}): ${errors.join(", ")}` });
+    cleaned.push(list[i]);
+  }
+
+  const insert = db.prepare(`
+    INSERT INTO entries (id, date, name, renewal, rd_array, fd_array, month_key)
+    VALUES (@id, @date, @name, @renewal, @rd_array, @fd_array, @month_key)
+  `);
+  const tx = db.transaction(() => {
+    for (const e of cleaned) {
+      const entryDate = e.date || new Date().toISOString();
+      insert.run({
+        id: crypto.randomUUID(),
+        date: entryDate,
+        name: String(e.name).trim(),
+        renewal: Number(e.renewal) || 0,
+        rd_array: JSON.stringify(e.rdArray || []),
+        fd_array: JSON.stringify(e.fdArray || []),
+        month_key: getMonthKey(entryDate),
+      });
+    }
+  });
+  tx();
+
+  logAudit(req.user.label, "import-entries", `${cleaned.length} rows`);
+  res.status(201).json({ ok: true, imported: cleaned.length });
+});
+
 router.delete("/:id", requireAdmin, (req, res) => {
   const existing = db.prepare(`SELECT name FROM entries WHERE id = ?`).get(req.params.id);
   const result = db.prepare(`DELETE FROM entries WHERE id = ?`).run(req.params.id);

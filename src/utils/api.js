@@ -73,4 +73,28 @@ export const api = {
   getContent: () => request("/content"),
   updateAd: (ad) => request("/content/ad", { method: "PUT", body: ad, auth: true }),
   updateLeaderboard: (lb) => request("/content/leaderboard", { method: "PUT", body: lb, auth: true }),
+  updateMaintenance: (m) => request("/content/maintenance", { method: "PUT", body: m, auth: true }),
+
+  importEntries: (entries) => request("/entries/import", { method: "POST", body: { entries }, auth: true }),
+  restore: (backup) => request("/admin/restore", { method: "POST", body: backup, auth: true }),
+
+  // Authenticated file downloads: a plain <a href> can't send the bearer
+  // token, so we fetch as a blob and trigger the download from memory.
+  downloadFile: async (path, fallbackName) => {
+    const res = await request(path, { auth: true, raw: true });
+    const blob = await res.blob();
+    const dispo = res.headers.get("Content-Disposition") || "";
+    const match = dispo.match(/filename="?([^"]+)"?/);
+    const name = match ? match[1] : fallbackName;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  },
+  downloadExcel: () => api.downloadFile("/export/excel", `rd-fd-register-${Date.now()}.xlsx`),
+  downloadBackup: () => api.downloadFile("/admin/backup", `rdfd-backup-${Date.now()}.json`),
 };

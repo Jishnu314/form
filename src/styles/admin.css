@@ -1,0 +1,1511 @@
+/* ============================================================================
+   admin.css — styles for the redesigned public form (.reg-*) and the
+   login-gated admin dashboard (.adm-*), plus the dependency-free charts.
+   The design tokens live on .rdfd-app in app.css; these trees render outside
+   it, so we mirror the tokens onto :root here.
+   ========================================================================== */
+
+:root {
+  --ink: #142240;
+  --ink-soft: #45527a;
+  --paper: #ecf0ef;
+  --card: #ffffff;
+  --accent: #b8873a;
+  --accent-deep: #8f6a2c;
+  --line: #d9dee0;
+  --danger: #af3d47;
+  --danger-bg: #f7e9ea;
+  --success: #2f6f4e;
+  --success-bg: #e8f2ec;
+  --muted: #6c7690;
+  --shadow: 0 6px 22px rgba(20, 34, 64, 0.08);
+  --shadow-lg: 0 18px 50px rgba(20, 34, 64, 0.22);
+}
+
+.reg,
+.adm,
+.adm-login {
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.reg *,
+.adm *,
+.adm-login * {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   PUBLIC FORM
+   ========================================================================== */
+
+.reg {
+  min-height: 100vh;
+  background: var(--paper);
+  padding-bottom: 56px;
+}
+
+.reg-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--ink);
+  color: #f4ede0;
+  box-shadow: 0 4px 14px rgba(20, 34, 64, 0.18);
+}
+.reg-header-inner {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.reg-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.reg-brand svg {
+  color: var(--accent);
+}
+.reg-monthtag {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  font-weight: 500;
+  color: #d9c4a0;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 5px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.reg-main {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 22px 18px 0;
+}
+.reg-banner-wrap {
+  margin-bottom: 18px;
+}
+
+.reg-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 26px 24px;
+  box-shadow: var(--shadow);
+}
+
+.reg-formtitle {
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 23px;
+  margin: 0;
+  color: var(--ink);
+}
+.reg-formsub {
+  margin: 5px 0 22px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.reg-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  margin-bottom: 7px;
+}
+.reg-req {
+  color: var(--danger);
+}
+
+.reg-input {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--ink);
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.reg-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(184, 135, 58, 0.14);
+}
+.reg-input::placeholder {
+  color: #a7aebf;
+}
+
+/* Amount field with a ₹ prefix */
+.reg-amount {
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.reg-amount:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(184, 135, 58, 0.14);
+}
+.reg-rupee {
+  display: flex;
+  align-items: center;
+  padding: 0 13px;
+  background: #f6f2ea;
+  border-right: 1px solid var(--line);
+  color: var(--accent-deep);
+  font-weight: 600;
+  font-size: 15px;
+}
+.reg-amount input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--ink);
+  background: transparent;
+  min-width: 0;
+}
+
+/* RD / FD deposit sections */
+.reg-section {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--line);
+}
+.reg-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.reg-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.reg-section-title svg {
+  color: var(--accent);
+}
+.reg-section-total {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.reg-deposit-row {
+  display: grid;
+  grid-template-columns: 1fr 130px auto;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.reg-scheme {
+  border: 1.5px solid var(--line);
+  border-radius: 9px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  min-width: 0;
+}
+.reg-scheme:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.reg-row-del {
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 9px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.reg-row-del:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+.reg-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px dashed var(--line);
+  background: transparent;
+  color: var(--accent-deep);
+  border-radius: 9px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.reg-add:hover {
+  border-color: var(--accent);
+  background: #faf6ef;
+}
+
+.reg-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24px;
+  padding: 16px 18px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 12px;
+}
+.reg-total span {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #cbd2e2;
+}
+.reg-total strong {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.reg-error {
+  margin-top: 16px;
+  padding: 11px 14px;
+  border-radius: 9px;
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.reg-submit {
+  width: 100%;
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 11px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+.reg-submit:hover:not(:disabled) {
+  background: var(--accent-deep);
+}
+.reg-submit:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.reg-submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Paused / closed card */
+.reg-closed {
+  text-align: center;
+  padding: 40px 26px;
+}
+.reg-closed svg {
+  color: var(--accent);
+}
+.reg-closed h2 {
+  font-family: "Fraunces", serif;
+  margin: 14px 0 6px;
+  font-size: 20px;
+}
+.reg-closed p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Confirmation receipt */
+.reg-receipt {
+  text-align: center;
+}
+.reg-receipt-check {
+  width: 62px;
+  height: 62px;
+  margin: 4px auto 14px;
+  border-radius: 50%;
+  background: var(--success-bg);
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reg-receipt h2 {
+  font-family: "Fraunces", serif;
+  font-size: 21px;
+  margin: 0;
+}
+.reg-receipt-name {
+  margin: 4px 0 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.reg-receipt-lines {
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.reg-receipt-line {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--line);
+}
+.reg-receipt-line span:first-child {
+  color: var(--ink-soft);
+}
+.reg-receipt-line span:last-child {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 500;
+}
+.reg-receipt-line:last-child {
+  border-bottom: none;
+}
+.reg-receipt-total {
+  background: #faf6ef;
+  font-weight: 700;
+}
+.reg-receipt-total span:last-child {
+  color: var(--accent-deep);
+  font-weight: 700;
+}
+
+.reg-adminlink {
+  text-align: center;
+  margin-top: 26px;
+}
+.reg-adminlink a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: color 0.15s, background 0.15s;
+}
+.reg-adminlink a:hover {
+  color: var(--accent-deep);
+  background: rgba(184, 135, 58, 0.08);
+}
+
+/* Faint maker's credit at the foot of the form. Doubles as the hidden admin
+   entrance: press and hold it for 3s. Styled to look like an ordinary
+   signature so visitors ignore it; non-selectable and no tap highlight so
+   the long-press feels clean on touch devices. */
+.reg-watermark {
+  text-align: center;
+  margin-top: 36px;
+  padding-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  opacity: 0.35;
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  transition: opacity 0.2s;
+}
+.reg-watermark:hover {
+  opacity: 0.55;
+}
+
+/* ==========================================================================
+   ADMIN LOGIN
+   ========================================================================== */
+
+.adm-login {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 0%, #1c2c50 0%, var(--ink) 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.adm-login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--card);
+  border-radius: 18px;
+  padding: 34px 30px 28px;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+.adm-login-badge {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
+  background: var(--ink);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.adm-login-card h1 {
+  font-family: "Fraunces", serif;
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+.adm-login-card p {
+  margin: 0 0 22px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.adm-login-card .reg-input {
+  text-align: center;
+  letter-spacing: 0.3em;
+  font-family: "IBM Plex Mono", monospace;
+}
+.adm-login-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+}
+.adm-login-back:hover {
+  color: var(--accent-deep);
+}
+
+.adm-fullload {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* ==========================================================================
+   ADMIN SHELL
+   ========================================================================== */
+
+.adm {
+  min-height: 100vh;
+  background: var(--paper);
+  display: flex;
+}
+
+.adm-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 34, 64, 0.45);
+  z-index: 40;
+  display: none;
+}
+
+.adm-sidebar {
+  width: 244px;
+  flex-shrink: 0;
+  background: var(--ink);
+  color: #cdd5e6;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.adm-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 18px;
+  color: #fff;
+  padding: 6px 10px 20px;
+}
+.adm-brand svg {
+  color: var(--accent);
+}
+
+.adm-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.adm-navitem {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 12px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #b8c1d6;
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+.adm-navitem svg {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+.adm-navitem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+.adm-navitem.active {
+  background: var(--accent);
+  color: #fff;
+}
+.adm-navitem.active svg {
+  opacity: 1;
+}
+
+.adm-sidefoot {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.adm-logout {
+  color: #e2a9af;
+}
+.adm-logout:hover {
+  background: rgba(175, 61, 71, 0.18);
+  color: #fff;
+}
+.adm-whoami {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 9px;
+}
+.adm-who-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #eef1f7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.adm-role {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.adm-role-admin {
+  background: var(--accent);
+  color: #fff;
+}
+.adm-role-staff {
+  background: rgba(255, 255, 255, 0.14);
+  color: #cdd5e6;
+}
+
+/* main column */
+.adm-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.adm-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(236, 240, 239, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+  padding: 16px 26px;
+}
+.adm-pagetitle {
+  font-family: "Fraunces", serif;
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0;
+}
+.adm-hamburger,
+.adm-close-mobile {
+  display: none;
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 9px;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  cursor: pointer;
+}
+.adm-page {
+  padding: 26px;
+  max-width: 1080px;
+  width: 100%;
+}
+
+/* ==========================================================================
+   SHARED ADMIN UI
+   ========================================================================== */
+
+.adm-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.adm-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+.adm-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.adm-cardhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.adm-card-title-inline {
+  margin-bottom: 0;
+}
+.adm-chart-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.adm-chart-nav button {
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  cursor: pointer;
+}
+.adm-chart-nav button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.adm-chart-range {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  min-width: 118px;
+  text-align: center;
+}
+.adm-card-danger {
+  border-color: #e9c9cd;
+}
+.adm-card-danger .adm-card-title {
+  color: var(--danger);
+}
+
+.adm-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.adm-note {
+  padding: 14px 16px;
+  border-radius: 11px;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.adm-note-warn {
+  background: #fdf4e3;
+  border: 1px solid #ecd6a8;
+  color: #7a5a12;
+}
+
+/* buttons */
+.adm-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--line);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 9px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.adm-btn-ghost:hover {
+  border-color: var(--accent);
+  background: #faf6ef;
+}
+.adm-btn-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: var(--danger);
+  color: #fff;
+  border-radius: 9px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.adm-btn-danger:hover:not(:disabled) {
+  filter: brightness(0.92);
+}
+.adm-btn-danger:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.adm-btn-inline {
+  width: auto;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+/* toolbar: search + selects */
+.adm-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.adm-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 200px;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 0 12px;
+  color: var(--muted);
+}
+.adm-search:focus-within {
+  border-color: var(--accent);
+}
+.adm-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 11px 0;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  background: transparent;
+  min-width: 0;
+}
+.adm-search button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+}
+.adm-select {
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+.adm-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.adm-bulkbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 11px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.adm-bulkbar > div {
+  display: flex;
+  gap: 8px;
+}
+.adm-bulkbar .adm-btn-ghost {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.adm-bulkbar .adm-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================================================
+   OVERVIEW — stat cards + charts
+   ========================================================================== */
+
+.adm-statgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.adm-stat {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+.adm-stat-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: #faf3e7;
+  color: var(--accent-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.adm-stat-value {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.adm-stat-label {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.adm-stat-sub {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.adm-2col {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 18px;
+}
+
+/* ==========================================================================
+   TABLE
+   ========================================================================== */
+
+.adm-tablewrap {
+  padding: 0;
+  overflow-x: auto;
+}
+.adm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.adm-table th {
+  text-align: left;
+  padding: 13px 16px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+.adm-table td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  vertical-align: top;
+}
+.adm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.adm-table tbody tr:hover {
+  background: #faf9f6;
+}
+.adm-table tr.sel {
+  background: #faf3e7;
+}
+.adm-num {
+  text-align: right;
+  font-family: "IBM Plex Mono", monospace;
+  white-space: nowrap;
+}
+.adm-td-date {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.adm-td-name {
+  font-weight: 600;
+}
+.adm-td-total {
+  font-weight: 700;
+  color: var(--accent-deep);
+}
+
+/* RD/FD breakdown: total on top, per-scheme lines beneath at 50% opacity */
+.adm-deposit-total {
+  font-weight: 500;
+}
+.adm-deposit-list {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.adm-deposit-item {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  font-size: 11px;
+  opacity: 0.5;
+  white-space: nowrap;
+}
+.adm-deposit-scheme {
+  font-family: "Inter", sans-serif;
+  text-transform: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+.adm-deposit-amt {
+  flex-shrink: 0;
+}
+.adm-th-check {
+  width: 40px;
+  text-align: center;
+}
+.adm-th-check input,
+.adm-td-actions button {
+  cursor: pointer;
+}
+.adm-th-actions {
+  width: 84px;
+}
+.adm-td-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.adm-td-actions button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  border-radius: 7px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s;
+}
+.adm-td-actions button:hover {
+  background: #eef0ef;
+  color: var(--ink);
+}
+.adm-td-actions .adm-del:hover,
+.adm-del:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.adm-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 0 4px;
+}
+.adm-pager-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.adm-pager-controls button {
+  border: 1.5px solid var(--line);
+  background: #fff;
+  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+  cursor: pointer;
+}
+.adm-pager-controls button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ==========================================================================
+   MODAL (entry editor)
+   ========================================================================== */
+
+.adm-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 34, 64, 0.5);
+  z-index: 60;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 18px;
+  overflow-y: auto;
+}
+.adm-modal {
+  width: 100%;
+  max-width: 440px;
+  background: var(--card);
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: var(--shadow-lg);
+}
+.adm-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.adm-modal-head h3 {
+  font-family: "Fraunces", serif;
+  font-size: 19px;
+  margin: 0;
+}
+.adm-modal-head button {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  padding: 4px;
+  border-radius: 7px;
+}
+.adm-modal-head button:hover {
+  background: #eef0ef;
+  color: var(--ink);
+}
+.adm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.adm-editsection {
+  margin-top: 18px;
+  border-top: 1px dashed var(--line);
+  padding-top: 14px;
+}
+.adm-editsection-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+.adm-editsection-head button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1.5px dashed var(--line);
+  background: transparent;
+  color: var(--accent-deep);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.adm-editsection-head button:hover {
+  border-color: var(--accent);
+}
+.adm-editsection-empty {
+  font-size: 12.5px;
+  color: var(--muted);
+  padding: 4px 0 8px;
+}
+.adm-editrow {
+  display: grid;
+  grid-template-columns: 1fr 120px auto;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.adm-editrow input {
+  border: 1.5px solid var(--line);
+  border-radius: 9px;
+  padding: 9px 11px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--ink);
+  min-width: 0;
+}
+.adm-editrow input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.adm-editrow input:nth-child(2) {
+  font-family: "IBM Plex Mono", monospace;
+}
+
+/* ==========================================================================
+   STAFF / SETTINGS FORMS
+   ========================================================================== */
+
+.adm-staff-form,
+.adm-pinform {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.adm-staff-form .reg-input,
+.adm-pinform .reg-input {
+  flex: 1;
+  min-width: 160px;
+}
+
+.adm-userlist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.adm-userrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+.adm-user-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-soft);
+}
+.adm-user-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+.adm-userrow .adm-role {
+  color: #fff;
+}
+.adm-userrow .adm-role-staff {
+  background: var(--ink-soft);
+}
+.adm-userrow .adm-del {
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  padding: 7px;
+  border-radius: 8px;
+}
+.adm-userrow .adm-del:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* ==========================================================================
+   DATA & BACKUP
+   ========================================================================== */
+
+.adm-data-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.adm-data-tile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fcfbf9;
+}
+.adm-data-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  background: #faf3e7;
+  color: var(--accent-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.adm-data-icon-danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.adm-data-body {
+  flex: 1;
+  min-width: 0;
+}
+.adm-data-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.adm-data-sub {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* ==========================================================================
+   CHARTS
+   ========================================================================== */
+
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 190px;
+  padding-top: 10px;
+}
+.chart-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.chart-bar-value {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.chart-bar-track {
+  width: 100%;
+  max-width: 46px;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+}
+.chart-bar-fill {
+  width: 100%;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-deep) 100%);
+  border-radius: 6px 6px 0 0;
+  min-height: 2px;
+  transition: height 0.3s ease;
+}
+.chart-bar-label {
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.chart-donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+}
+.chart-donut {
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+}
+.chart-donut-bg {
+  stroke: #eef0ef;
+}
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-width: 120px;
+}
+.chart-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+}
+.chart-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.chart-legend-label {
+  flex: 1;
+  color: var(--ink-soft);
+}
+.chart-legend-item strong,
+.chart-legend-amt {
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.chart-legend-pct {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+  min-width: 34px;
+  text-align: right;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .adm-statgrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .adm-2col,
+  .adm-data-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .adm-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: var(--shadow-lg);
+  }
+  .adm-sidebar.open {
+    transform: translateX(0);
+  }
+  .adm-scrim {
+    display: block;
+  }
+  .adm-hamburger {
+    display: flex;
+  }
+  .adm-page {
+    padding: 18px 14px;
+  }
+  .adm-topbar {
+    padding: 14px 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Stack each deposit row: scheme name on its own full-width line, then the
+     amount field (roomy) beside the delete button. Typing a number into a
+     narrow squeezed box is painful on phones. */
+  .reg-deposit-row,
+  .adm-editrow {
+    grid-template-columns: 1fr auto;
+  }
+  .reg-deposit-row > .reg-scheme,
+  .adm-editrow > input:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .adm-statgrid {
+    grid-template-columns: 1fr;
+  }
+}
